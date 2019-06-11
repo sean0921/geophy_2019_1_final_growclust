@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ps=focal_profile.ps
 cpt=topo.cpt
-catalog=201807030920.list
+catalog=201807030920_gc.list
 data_dir="$HOME"/data/grdfile/
 
 #=== cut the grd file
@@ -19,7 +19,7 @@ gmt psxy "$data_dir"CGS_fault.gmt -R -JM -W2,250/0/0 -O -K >>"$ps"
 # plot the scale bar
 gmt psscale -C"$cpt" -Dx14/0+w9/.5+e -Ba500+l"Elevation (m)" -O -K >> "$ps"
 # plot Earthquakes
-awk '{print $8,$9,$11/12}' "$catalog" | gmt psxy -R -JM -Sc -K -O >> "$ps"
+awk '{print $24,$23,$11/12}' "$catalog" | gmt psxy -R -JM -Sc -K -O >> "$ps"
 # plot focal mechanism
 gmt psmeca 201807030920.foc -R -JM -Sa1.0/14p/6 -Gred -O -K >> "$ps"
 
@@ -58,7 +58,7 @@ gmt psxy area -R -JM -W2,red -O -K >> "$ps"
 width=10
 width2=20
 depth=15
-awk '{printf("%f %f %f %f\n",$8,$9,$10,$11)}' "$catalog" | \
+awk '{printf("%f %f %f %f\n",$24,$23,$25,$11)}' "$catalog" | \
 gmt project -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > catalog_profile.gmt
 echo "$A1_lon" "$A1_lat" 0 0 > end_pts
 echo "$A2_lon" "$A2_lat" 0 0 >> end_pts
