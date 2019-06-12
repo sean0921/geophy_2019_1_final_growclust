@@ -1,11 +1,0 @@
-# GMT 5 Session common arguments shelf
-BEGIN GMT 5.4.5
-B	wESnxa+lDistance (km)ya+lDepth (km)
-J	X
-JM	M3
-JX	X15/-7.5
-R	0/15.335078044/0/15
-X	-11
-Y	-10
-L	16
-END
