@@ -7,6 +7,7 @@
 ## after Relocation via GrowClust
 
 ![](focal_profile_gc.jpg)
+![](focal_profile_clust.jpg)
 
 ## Steps
 
