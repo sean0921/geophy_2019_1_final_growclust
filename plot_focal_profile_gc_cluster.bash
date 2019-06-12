@@ -19,14 +19,19 @@ gmt pscoast -R -JM -Df -W1 -K -O >> "$ps"
 gmt psxy "$data_dir"CGS_fault.gmt -R -JM -W2,250/0/0 -O -K >>"$ps"
 # plot the scale bar
 gmt psscale -C"$cpt" -Dx14/0+w9/.5+e -Ba500+l"Elevation (m)" -O -K >> "$ps"
+
 # plot Earthquakes (cluster)
 #awk '{print $9,$8,$11/12}' "$catalog" | gmt psxy -R -JM -Sc -K -O >> "$ps"
 awk '{if (NF==22 && $1==1) print $12,$11,$4/12}' "$clust" | gmt psxy -R -JM -Sc -Wred -K -O >> "$ps"
 awk '{if (NF==22 && $1==2) print $12,$11,$4/12}' "$clust" | gmt psxy -R -JM -Sc -Wblue -K -O >> "$ps"
 awk '{if (NF==22 && $1==3) print $12,$11,$4/12}' "$clust" | gmt psxy -R -JM -Sc -Wgreen -K -O >> "$ps"
 awk '{if (NF==22 && $1>3)  print $12,$11,$4/12}' "$clust" | gmt psxy -R -JM -Sc -W195/214/25 -K -O >> "$ps"
+
 # plot focal mechanism
 gmt psmeca 201807030920.foc -R -JM -Sa1.0/14p/6 -Gred -O -K >> "$ps"
+
+# plot centroid of earthquakes cluster
+awk '{if (NF==6 && $1<4) print $4,$3,0.3}' "$clust" | gmt psxy -R -JM -Sa -Wpurple -Gyellow -K -O >> "$ps"
 
 # plot AA' line
 # coord. of A1 & A2
@@ -64,6 +69,13 @@ width=10
 width2=20
 depth=15
 
+echo "$A1_lon" "$A1_lat" 0 0 > end_pts
+echo "$A2_lon" "$A2_lat" 0 0 >> end_pts
+gmt project end_pts -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > edge.gmt
+mdis=$(gmt gmtinfo edge.gmt -i4 -C -o1)
+#echo $mdis
+gmt psbasemap -R0/"$mdis"/0/"$depth" -JX15/-7.5 -BwESn -Bxa+l"Distance (km)" -Bya+l"Depth (km)" -X-11 -Y-10 -K -O >> "$ps"
+
 # reference format
 #awk '{if (NF==22 && $1==1) print $12,$11,$4/12}' "$clust" | gmt psxy -R -JM -Sc -Wred -K -O >> "$ps"
 #awk '{if (NF==22 && $1==2) print $12,$11,$4/12}' "$clust" | gmt psxy -R -JM -Sc -Wblue -K -O >> "$ps"
@@ -74,49 +86,30 @@ depth=15
 #awk '{printf("%f %f %f %f\n",$9,$8,$10,$11)}' "$clust" | \
 awk '{if(NF==22 && $1==1) printf("%f %f %f %f\n",$12,$11,$13,$4)}' "$clust" | \
 gmt project -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > catalog_profile.gmt
-echo "$A1_lon" "$A1_lat" 0 0 > end_pts
-echo "$A2_lon" "$A2_lat" 0 0 >> end_pts
-gmt project end_pts -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > edge.gmt
-mdis=$(gmt gmtinfo edge.gmt -i4 -C -o1)
-#echo $mdis
-gmt psbasemap -R0/"$mdis"/0/"$depth" -JX15/-7.5 -BwESn -Bxa+l"Distance (km)" -Bya+l"Depth (km)" -X-11 -Y-10 -K -O >> "$ps"
 awk '{print $5,$3,$4/12}' catalog_profile.gmt | gmt psxy -R -JX -Sc -Wred -K -O >> "$ps"
 
 # cluster No.2
 #awk '{printf("%f %f %f %f\n",$9,$8,$10,$11)}' "$clust" | \
 awk '{if(NF==22 && $1==2) printf("%f %f %f %f\n",$12,$11,$13,$4)}' "$clust" | \
 gmt project -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > catalog_profile.gmt
-##echo "$A1_lon" "$A1_lat" 0 0 > end_pts
-##echo "$A2_lon" "$A2_lat" 0 0 >> end_pts
-##gmt project end_pts -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > edge.gmt
-##mdis=$(gmt gmtinfo edge.gmt -i4 -C -o1)
-###echo $mdis
-##gmt psbasemap -R0/"$mdis"/0/"$depth" -JX15/-7.5 -BwESn -Bxa+l"Distance (km)" -Bya+l"Depth (km)" -X-11 -Y-10 -K -O >> "$ps"
 awk '{print $5,$3,$4/12}' catalog_profile.gmt | gmt psxy -R -JX -Sc -Wblue -K -O >> "$ps"
 
 # cluster No.3
 #awk '{printf("%f %f %f %f\n",$9,$8,$10,$11)}' "$clust" | \
 awk '{if(NF==22 && $1==3) printf("%f %f %f %f\n",$12,$11,$13,$4)}' "$clust" | \
 gmt project -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > catalog_profile.gmt
-##echo "$A1_lon" "$A1_lat" 0 0 > end_pts
-##echo "$A2_lon" "$A2_lat" 0 0 >> end_pts
-##gmt project end_pts -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > edge.gmt
-##mdis=$(gmt gmtinfo edge.gmt -i4 -C -o1)
-###echo $mdis
-##gmt psbasemap -R0/"$mdis"/0/"$depth" -JX15/-7.5 -BwESn -Bxa+l"Distance (km)" -Bya+l"Depth (km)" -X-11 -Y-10 -K -O >> "$ps"
 awk '{print $5,$3,$4/12}' catalog_profile.gmt | gmt psxy -R -JX -Sc -Wgreen -K -O >> "$ps"
 
 # other clusters
 #awk '{printf("%f %f %f %f\n",$9,$8,$10,$11)}' "$clust" | \
 awk '{if(NF==22 && $1>3) printf("%f %f %f %f\n",$12,$11,$13,$4)}' "$clust" | \
 gmt project -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > catalog_profile.gmt
-##echo "$A1_lon" "$A1_lat" 0 0 > end_pts
-##echo "$A2_lon" "$A2_lat" 0 0 >> end_pts
-##gmt project end_pts -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > edge.gmt
-##mdis=$(gmt gmtinfo edge.gmt -i4 -C -o1)
-###echo $mdis
-##gmt psbasemap -R0/"$mdis"/0/"$depth" -JX15/-7.5 -BwESn -Bxa+l"Distance (km)" -Bya+l"Depth (km)" -X-11 -Y-10 -K -O >> "$ps"
 awk '{print $5,$3,$4/12}' catalog_profile.gmt | gmt psxy -R -JX -Sc -W195/214/25 -K -O >> "$ps"
+
+# plot centroid of earthquakes cluster
+awk '{if (NF==6 && $1<4) printf("%f %f %f %f\n",$4,$3,$5,6)}' "$clust" | \
+gmt project -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > catalog_profile.gmt
+awk '{print $5,$3,$4/12}' catalog_profile.gmt | gmt psxy -R -JX -Sa -Wpurple -Gyellow -K -O >> "$ps"
 
 #==== plot the focal mechanism
 gmt project 201807030920.foc -C"$A1_lon"/"$A1_lat" -E"$A2_lon"/"$A2_lat" -W-"$width"/"$width" -Q > focal_profile.gmt
@@ -128,9 +121,9 @@ gmt psbasemap -R0/10/0/10 -JX15/-7.5 -BwESn  -X3 -Y-9.5 -K -O >> "$ps"
 # ==== 圖例框與圖例內容 ====
 gmt psxy -R -J -O -K -W0.05c,black >> "$ps" << BOXEND
 1 1
-6 1
-6 6
-1 6
+7 1
+7 7
+1 7
 1 1
 BOXEND
 
@@ -138,7 +131,9 @@ echo "2 2 0.5" | gmt psxy -R -J -Sc -Wred -K -O >> "$ps"
 echo "2 3 0.5" | gmt psxy -R -J -Sc -Wblue -K -O >> "$ps"
 echo "2 4 0.5" | gmt psxy -R -J -Sc -Wgreen -K -O >> "$ps"
 echo "2 5 0.5" | gmt psxy -R -J -Sc -W195/214/25 -K -O >> "$ps"
+echo "2 6 0.5" | gmt psxy -R -J -Sa -Wpurple -Gyellow -K -O >> "$ps"
 echo "3 2 Cluster 1" | gmt pstext -R -J -O -K -F+f14p+jML >> "$ps"
 echo "3 3 Cluster 2" | gmt pstext -R -J -O -K -F+f14p+jML >> "$ps"
 echo "3 4 Cluster 3" | gmt pstext -R -J -O -K -F+f14p+jML >> "$ps"
-echo "3 5 Other clusters" | gmt pstext -R -J -O `#-K` -F+f14p+jML >> "$ps"
+echo "3 5 Other clusters" | gmt pstext -R -J -O -K -F+f14p+jML >> "$ps"
+echo "3 6 cluster centroid" | gmt pstext -R -J -O `#-K` -F+f14p+jML >> "$ps"
