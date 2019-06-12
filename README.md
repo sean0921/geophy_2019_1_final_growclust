@@ -2,12 +2,12 @@
 
 ## before Relocation
 
-![](focal_profile.jpg)
+![](focal_profile.png)
 
 ## after Relocation via GrowClust
 
-![](focal_profile_gc.jpg)
-![](focal_profile_clust.jpg)
+![](focal_profile_gc.png)
+![](focal_profile_clust.png)
 
 ## Steps
 
